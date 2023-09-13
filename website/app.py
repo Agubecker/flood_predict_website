@@ -14,6 +14,29 @@ url = 'https://flood-pred-intel-idtyvgmhca-vp.a.run.app/forecast'
 response = requests.get(url).json()
 result = response['forecast']
 
+def get_past_floods() -> pd.DataFrame:
+    base_url_flood = "https://flood-api.open-meteo.com/v1/flood"
+
+    params_flood = {
+        "latitude": TALAGANTE_LAT,
+        "longitude": TALAGANTE_LON,
+        "daily": "river_discharge",
+        "past_days": "4",
+        "models": "seamless_v4"
+    }
+
+    response_flood = requests.get(base_url_flood, params=params_flood)
+
+    raw_data_flood = response_flood.json()
+
+    df_flood = pd.DataFrame(data= raw_data_flood, columns=['date','flood'])
+
+    df_flood['date'] = raw_data_flood['daily']['time']
+    df_flood['flood'] = raw_data_flood['daily']['flood']
+    df_flood.set_index('date', inplace=True)
+    df_flood.index = pd.to_datetime(df_flood.index)
+    return df_flood
+
 def plot_creation(df):
     plt.style.context('dark_background')
 
@@ -98,8 +121,10 @@ columns = st.columns(3)
 button = columns[1].button('Click here to forecast', use_container_width=True)
 
 if button:
+    df = get_past_floods()
+    fig = plot_creation(df)
     f'''
-    ## {result}
+    ## {fig}
     '''
 else:
     st.write('')
