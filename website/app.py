@@ -9,10 +9,10 @@ import matplotlib.pyplot as plt
 TALAGANTE_LAT = -33.714913
 TALAGANTE_LON= -70.957909
 
-url = 'http://127.0.0.1:8000/forecast'
+url = 'https://flood-pred-intel-idtyvgmhca-vp.a.run.app/forecast'
 
 response = requests.get(url).json()
-result = response['Status']
+result = response['forecast']
 
 def plot_creation(df):
     plt.style.context('dark_background')
@@ -105,7 +105,3 @@ else:
     st.write('')
 
 st.write('---')
-
-# f'''
-# ## Your ride should cost around 💲{round(prediction["fare"], 2)}
-# '''
