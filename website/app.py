@@ -22,6 +22,7 @@ def get_past_floods() -> pd.DataFrame:
         "longitude": TALAGANTE_LON,
         "daily": "river_discharge",
         "past_days": "4",
+        "forecast_days": "1",
         "models": "seamless_v4"
     }
 
@@ -35,6 +36,8 @@ def get_past_floods() -> pd.DataFrame:
     df_flood['flood'] = raw_data_flood['daily']['flood']
     df_flood.set_index('date', inplace=True)
     df_flood.index = pd.to_datetime(df_flood.index)
+    df_flood = df_flood.iloc[:-1,:]
+
     return df_flood
 
 def plot_creation(df):
