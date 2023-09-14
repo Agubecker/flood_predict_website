@@ -120,7 +120,7 @@ st.write('---')
 ## Forecast in your area!🌊
 '''
 '''
-Just click the button below and let us do the rest 😉
+Just click the button below and let AI do the rest
 '''
 
 # creating 3 cols layout in order to display the button in the middle
@@ -147,15 +147,15 @@ if button:
 
     if float(result) >= 150 and float(result) <= 190:
         f'''
-        ## ⚠️ River flow at warning levels
+        ## ⚠️ Warning flow forecasted for tomorrow
         '''
     elif float(result) > 190:
         f'''
-        ## 🛑 River flow at danger levels
+        ## 🛑 Danger flow forecasted for tomorrow
         '''
     else:
         f'''
-        ## ✅ River flow at normal levels
+        ## ✅ Normal flow forecasted for tomorrow
         '''
 else:
     st.write('')
