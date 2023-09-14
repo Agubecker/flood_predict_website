@@ -67,8 +67,13 @@ def plot_creation(df):
     yesterday = yesterday.strftime('%m-%d')
     ax.axvline(yesterday, color='gray', linestyle='--', label='forecast', alpha=0.5)
 
-    # deleting the y axis
-    ax.axes.yaxis.set_visible(False)
+    for axis in ['top', 'bottom', 'left', 'right']:
+        ax.spines[axis].set_color('white')
+
+    # # deleting the y axis
+    # ax.axes.yaxis.set_visible(True)
+
+    ax.tick_params(axis='y', colors='white', labelsize=10)
 
     # adding black lines to each day
     ax.xaxis.set_tick_params(which='major', size=10, width=1, direction='out', color='white')
