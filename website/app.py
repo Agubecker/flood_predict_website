@@ -33,36 +33,42 @@ def get_past_floods() -> pd.DataFrame:
     df_flood = pd.DataFrame(data= raw_data_flood, columns=['date','flood'])
 
     df_flood['date'] = raw_data_flood['daily']['time']
-    df_flood['flood'] = raw_data_flood['daily']['flood']
+    # transforming dates into '%m-%d' format
+    df_flood['date'] = pd.to_datetime(df_flood['date'], format='%Y-%m-%d').dt.strftime('%m-%d')
+    df_flood['flood'] = raw_data_flood['daily']['river_discharge']
     df_flood.set_index('date', inplace=True)
-    df_flood.index = pd.to_datetime(df_flood.index)
-    df_flood = df_flood.iloc[:-1,:]
+
+    # df_flood = df_flood.iloc[:-1,:]
 
     return df_flood
 
 def plot_creation(df):
-    plt.style.context('dark_background')
+    fig, ax = plt.subplots(figsize=(10, 5), facecolor='#0e1117')
 
-    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.set_facecolor("#0e1117")
 
     # plotting the river flow with a line until today and a dotted line for the forecast
-    ax.plot(df.index[:8], df['flow(m3/s)'][:8], label='river flow', color='#4285f4', alpha=1)
-    ax.plot(df.index[7:], df['flow(m3/s)'][7:], label='forecast', color='#4285f4', alpha=1, linestyle='--')
-    ax.fill_between(df.index, df['flow(m3/s)'], color='#4285f4', alpha=0.3)
+    ax.plot(df.index[:-1], df['flood'][:-1], label='river flow', color='#4285f4', alpha=1)
 
-    # adding threshold
-    ax.axhline(250, color='red', linestyle='-', label='level of danger', alpha=0.5)
+    # plot the forecast as a single dotted line
+    ax.plot(df.index[-2:], df['flood'][-2:], label='forecast', color='#4285f4', alpha=1, linestyle=':')
+
+    # fill bellow the line
+    ax.fill_between(df.index, df['flood'], color='#4285f4', alpha=0.3)
+
+    # adding threshold danger
+    ax.axhline(200, color='red', linestyle='-', label='danger level', alpha=0.5)
+
+    # adding threshold warning
+    ax.axhline(150, color='yellow', linestyle='-', label='warning level', alpha=0.5)
 
     # adding vertical line in today's date
-    today = datetime.datetime.now()
-    today = today.strftime('%m-%d')
-    ax.axvline(today, color='gray', linestyle='--', label='today', alpha=0.5)
+    yesterday = datetime.datetime.now() + datetime.timedelta(days=1)
+    yesterday = yesterday.strftime('%m-%d')
+    ax.axvline(yesterday, color='gray', linestyle='--', label='tommorrow', alpha=0.5)
 
     # deleting the y axis
     ax.axes.yaxis.set_visible(False)
-
-    # taking out last day from the x axis and showing every 2 days in the x axis
-    ax.set_xticks(df.index[::2])
 
     # adding black lines to each day
     ax.xaxis.set_tick_params(which='major', size=10, width=1, direction='out', color='white')
@@ -125,10 +131,32 @@ button = columns[1].button('Click here to forecast', use_container_width=True)
 
 if button:
     df = get_past_floods()
+
+    # # adding tommorow's date
+    tommorrow = datetime.datetime.now() + datetime.timedelta(days=1)
+    tommorrow = tommorrow.strftime('%m-%d')
+    df.loc[tommorrow] = result
+
+    # # adding next day date
+    next = datetime.datetime.now() + datetime.timedelta(days=2)
+    next = next.strftime('%m-%d')
+    df.loc[next] = result
+
     fig = plot_creation(df)
-    f'''
-    ## {fig}
-    '''
+    st.pyplot(fig)
+
+    if float(result) >= 150 and float(result) <= 190:
+        f'''
+        ## ⚠️ River flow at warning levels
+        '''
+    elif float(result) > 190:
+        f'''
+        ## 🛑 River flow at danger levels
+        '''
+    else:
+        f'''
+        ## ✅ River flow at normal levels
+        '''
 else:
     st.write('')
 
