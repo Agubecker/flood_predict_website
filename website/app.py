@@ -43,9 +43,11 @@ def get_past_floods() -> pd.DataFrame:
     return df_flood
 
 def plot_creation(df):
-    fig, ax = plt.subplots(figsize=(10, 5), facecolor='#0e1117')
+    fig, ax = plt.subplots(figsize=(10, 5), facecolor='#ffffff')
 
-    ax.set_facecolor("#0e1117")
+    ax.set_facecolor("#ffffff")
+
+    # ax.set_frame_on(False)
 
     # plotting the river flow with a line until today and a dotted line for the forecast
     ax.plot(df.index[:-1], df['flood'][:-1], color='#4285f4', alpha=1)
@@ -68,18 +70,15 @@ def plot_creation(df):
     ax.axvline(yesterday, color='gray', linestyle='--', label='forecast', alpha=0.5)
 
     for axis in ['top', 'bottom', 'left', 'right']:
-        ax.spines[axis].set_color('white')
+        ax.spines[axis].set_color('black')
 
-    # # deleting the y axis
-    # ax.axes.yaxis.set_visible(True)
-
-    ax.tick_params(axis='y', colors='white', labelsize=10)
+    ax.tick_params(axis='y', colors='black', labelsize=10)
 
     # adding black lines to each day
-    ax.xaxis.set_tick_params(which='major', size=10, width=1, direction='out', color='white')
+    ax.xaxis.set_tick_params(which='major', size=10, width=1, direction='out', color='black')
 
     # remarking the x axis line with black color
-    ax.tick_params(axis='x', colors='white', labelsize=10)
+    ax.tick_params(axis='x', colors='black', labelsize=10)
 
     # choosing position for the legend
     ax.legend(loc='center left')
