@@ -48,10 +48,10 @@ def plot_creation(df):
     ax.set_facecolor("#0e1117")
 
     # plotting the river flow with a line until today and a dotted line for the forecast
-    ax.plot(df.index[:-1], df['flood'][:-1], label='river flow', color='#4285f4', alpha=1)
+    ax.plot(df.index[:-1], df['flood'][:-1], color='#4285f4', alpha=1)
 
     # plot the forecast as a single dotted line
-    ax.plot(df.index[-2:], df['flood'][-2:], label='forecast', color='#4285f4', alpha=1, linestyle=':')
+    ax.plot(df.index[-2:], df['flood'][-2:], color='#4285f4', alpha=1, linestyle=':')
 
     # fill bellow the line
     ax.fill_between(df.index, df['flood'], color='#4285f4', alpha=0.3)
@@ -65,7 +65,7 @@ def plot_creation(df):
     # adding vertical line in today's date
     yesterday = datetime.datetime.now() + datetime.timedelta(days=1)
     yesterday = yesterday.strftime('%m-%d')
-    ax.axvline(yesterday, color='gray', linestyle='--', label='tommorrow', alpha=0.5)
+    ax.axvline(yesterday, color='gray', linestyle='--', label='forecast', alpha=0.5)
 
     # deleting the y axis
     ax.axes.yaxis.set_visible(False)
@@ -133,9 +133,9 @@ if button:
     df = get_past_floods()
 
     # # adding tommorow's date
-    tommorrow = datetime.datetime.now() + datetime.timedelta(days=1)
-    tommorrow = tommorrow.strftime('%m-%d')
-    df.loc[tommorrow] = result
+    tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
+    tomorrow = tomorrow.strftime('%m-%d')
+    df.loc[tomorrow] = result
 
     # # adding next day date
     next = datetime.datetime.now() + datetime.timedelta(days=2)
@@ -147,15 +147,15 @@ if button:
 
     if float(result) >= 150 and float(result) <= 190:
         f'''
-        ## ⚠️ Warning flow forecasted for tomorrow
+        ## ⚠️ Warning flow forecasted for {tomorrow}
         '''
     elif float(result) > 190:
         f'''
-        ## 🛑 Danger flow forecasted for tomorrow
+        ## 🛑 Danger flow forecasted for {tomorrow}
         '''
     else:
         f'''
-        ## ✅ Normal flow forecasted for tomorrow
+        ## ✅ Normal flow forecasted for {tomorrow}
         '''
 else:
     st.write('')
